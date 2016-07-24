@@ -119,7 +119,7 @@ if (sources.length === 0) {
       process.stdout.write(result);
     }
   });
-  process.exit(0);
+  return;
 }
 
 var isDirSource = sources.length === 1 && fs.statSync(sources[0]).isDirectory();
