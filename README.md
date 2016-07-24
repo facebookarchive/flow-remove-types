@@ -54,7 +54,7 @@ need for sourcemaps, maintains legible output, and ensures that it is super easy
 to include `flow-remove-types` at any point in your existing build tools.
 
 Built atop the excellent [`babylon`](https://github.com/babel/babylon) parser,
-`flow-remove-types` shares the same parse rules as the source of truth
+`flow-remove-types` shares the same parse rules as the source of truth as
 Flow Babel plugins. It also passes through other common non-standard syntax such
 as [JSX](https://facebook.github.io/jsx/) and experimental ECMAScript proposals.
 
