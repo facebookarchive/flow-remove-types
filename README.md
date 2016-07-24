@@ -144,7 +144,7 @@ Transforming a directory of 20 files of 100 lines each:
 **flow-remove-types:**
 
 ```
-time ./node_modules/.bin/flow-remove-types src/ --out-dir dest/
+time flow-remove-types src/ --out-dir dest/
 
 real  0m0.431s
 user  0m0.436s
@@ -154,7 +154,7 @@ sys   0m0.068s
 **Babel:**
 
 ```
-time ./node_modules/.bin/babel src/ --out-dir dest/
+time babel src/ --out-dir dest/
 
 real  0m1.074s
 user  0m1.092s
