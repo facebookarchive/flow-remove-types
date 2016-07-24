@@ -104,3 +104,5 @@ export class MyClass    extends SomeClass                          {
 ## Use in Build Systems:
 
 **Rollup**: [`rollup-plugin-flow`](https://github.com/leebyron/rollup-plugin-flow)
+
+**Browserify:**: [`unflowify`](https://github.com/leebyron/unflowify)
