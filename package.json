@@ -1,0 +1,32 @@
+{
+  "name": "flow-remove-types",
+  "version": "1.0.0",
+  "description": "Removes Flow type annotations from JavaScript files with speed and simplicity.",
+  "author": "Lee Byron <lee@leebyron.com> (http://leebyron.com/)",
+  "license": "BSD-3-Clause",
+  "main": "index.js",
+  "bin": "flow-remove-types",
+  "homepage": "https://github.com/leebyron/flow-remove-types",
+  "bugs": {
+    "url": "https://github.com/leebyron/flow-remove-types/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/leebyron/flow-remove-types.git"
+  },
+  "scripts": {
+    "test": "node test/test.js",
+    "test-update": "node test/test.js --update"
+  },
+  "keywords": [
+    "flow",
+    "flowtype",
+    "compiler",
+    "transpiler",
+    "transform",
+    "es6"
+  ],
+  "dependencies": {
+    "babylon": "^6.8.4"
+  }
+}
