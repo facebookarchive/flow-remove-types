@@ -139,7 +139,7 @@ sys   0m4.238s
 
 ### Transform:
 
-Transforming a directory of 20 files of 100 lines:
+Transforming a directory of 20 files of 100 lines each:
 
 **flow-remove-types:**
 
