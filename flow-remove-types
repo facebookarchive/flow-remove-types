@@ -165,7 +165,7 @@ function transformSource(content, filepath) {
       var col = error.loc.column;
       var text = content.split(/\r\n?|\n|\u2028|\u2029/)[line];
       process.stderr.write(
-        source + '\n' +
+        filepath + '\n' +
         ' \u21B3 \033[31mSyntax Error: ' + error.message + '\033[0m\n' +
         '   \033[90m' + line + ':  \033[0m' +
         text.slice(0, col) + '\033[7;31m' + text[col] + '\033[0m' + text.slice(col + 1) + '\n'
