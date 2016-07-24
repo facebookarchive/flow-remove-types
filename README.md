@@ -106,3 +106,54 @@ export class MyClass    extends SomeClass                          {
 **Rollup**: [`rollup-plugin-flow`](https://github.com/leebyron/rollup-plugin-flow)
 
 **Browserify:** [`unflowify`](https://github.com/leebyron/unflowify)
+
+
+## Performance
+
+### Install:
+
+Installing via `npm` from an empty project:
+
+**flow-remove-types:**
+
+```
+time npm install flow-remove-types
+
+real  0m3.193s
+user  0m1.643s
+sys   0m0.775s
+```
+
+**Babel:**
+
+```
+time npm install babel-cli babel-plugin-transform-flow-strip-types
+
+real  0m23.200s
+user  0m10.395s
+sys   0m4.238s
+```
+
+### Transform:
+
+Transforming a directory of 20 files of 100 lines:
+
+**flow-remove-types:**
+
+```
+time ./node_modules/.bin/flow-remove-types src/ --out-dir dest/
+
+real  0m0.431s
+user  0m0.436s
+sys   0m0.068s
+```
+
+**Babel:**
+
+```
+time ./node_modules/.bin/babel src/ --out-dir dest/
+
+real  0m1.074s
+user  0m1.092s
+sys   0m0.149s
+```
