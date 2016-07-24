@@ -112,7 +112,7 @@ if (sources.length === 0) {
   process.stdin.resume();
   process.stdin.on('data', function (str) { content += str; });
   process.stdin.on('end', function () {
-    var result = flowRemoveTypes(content);
+    var result = transformSource(content, '<stdin>');
     if (outFile) {
       fs.writeFileSync(outFile, result);
     } else {
@@ -142,7 +142,7 @@ for (var i = 0; i < sources.length; i++) {
     }
   } else if (stat.isFile() && extensions.indexOf(path.extname(source)) !== -1) {
     var content = fs.readFileSync(source, 'utf8');
-    var result = flowRemoveTypes(content);
+    var result = transformSource(content, source);
     if (outDir) {
       mkdirp(path.dirname(path.join(outDir, source)));
       outFile = path.join(outDir, isDirSource ? path.relative(sources[0], source) : source);
@@ -153,5 +153,25 @@ for (var i = 0; i < sources.length; i++) {
     } else {
       process.stdout.write(result);
     }
+  }
+}
+
+function transformSource(content, filepath) {
+  try {
+    return flowRemoveTypes(content);
+  } catch (error) {
+    if (error.loc) {
+      var line = error.loc.line - 1;
+      var col = error.loc.column;
+      var text = content.split(/\r\n?|\n|\u2028|\u2029/)[line];
+      process.stderr.write(
+        source + '\n' +
+        ' \u21B3 \033[31mSyntax Error: ' + error.message + '\033[0m\n' +
+        '   \033[90m' + line + ':  \033[0m' +
+        text.slice(0, col) + '\033[7;31m' + text[col] + '\033[0m' + text.slice(col + 1) + '\n'
+      );
+      process.exit(1);
+    }
+    throw error;
   }
 }
