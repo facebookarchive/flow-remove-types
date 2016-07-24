@@ -16,7 +16,7 @@
   },
   "scripts": {
     "test": "node test/test.js",
-    "test-update": "node test/test.js --update"
+    "test-update": "./flow-remove-types test/source.js > test/expected.js"
   },
   "keywords": [
     "flow",
