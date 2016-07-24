@@ -17,6 +17,7 @@ every browser.
 `flow-remove-types` is a faster, simpler, zero-configuration alternative with
 minimal dependencies for super-fast `npm install` time.
 
+
 ## Get Started!
 
 Use the command line:
@@ -44,6 +45,14 @@ var input = fs.readFileSync('input.js', 'utf8');
 var output = flowRemoveTypes(input);
 fs.writeFileSync('output.js', output);
 ```
+
+
+## Use in Build Systems:
+
+**Rollup**: [`rollup-plugin-flow`](https://github.com/leebyron/rollup-plugin-flow)
+
+**Browserify:** [`unflowify`](https://github.com/leebyron/unflowify)
+
 
 ## Dead-Simple Transforms
 
@@ -100,12 +109,6 @@ export class MyClass    extends SomeClass                          {
 
 }
 ```
-
-## Use in Build Systems:
-
-**Rollup**: [`rollup-plugin-flow`](https://github.com/leebyron/rollup-plugin-flow)
-
-**Browserify:** [`unflowify`](https://github.com/leebyron/unflowify)
 
 
 ## Performance
