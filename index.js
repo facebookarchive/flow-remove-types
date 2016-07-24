@@ -70,6 +70,9 @@ var removeFlowVisitor = {
   TypeParameterDeclaration: removeNode,
   TypeParameterInstantiation: removeNode,
 
+  ClassDeclaration: removeImplementedInterfaces,
+  ClassExpression: removeImplementedInterfaces,
+
   Identifier(removedNodes, node, ast) {
     if (node.optional) {
       // Find the optional token.
@@ -78,26 +81,6 @@ var removeFlowVisitor = {
         idx++;
       } while (ast.tokens[idx].type.label !== '?');
       removeNode(removedNodes, ast.tokens[idx]);
-    }
-  },
-
-  ClassDeclaration(removedNodes, node, ast) {
-    // Remove implemented interfaces.
-    if (node.implements && node.implements.length > 0) {
-      var first = node.implements[0];
-      var last = node.implements[node.implements.length - 1];
-      var idx = findTokenIndex(ast.tokens, first.start);
-      do {
-        idx--;
-      } while (ast.tokens[idx].value !== 'implements');
-
-      var lastIdx = findTokenIndex(ast.tokens, last.start);
-      do {
-        if (ast.tokens[idx].type !== 'CommentBlock' &&
-            ast.tokens[idx].type !== 'CommentLine') {
-          removeNode(removedNodes, ast.tokens[idx]);
-        }
-      } while (idx++ !== lastIdx);
     }
   },
 
@@ -119,6 +102,27 @@ var removeFlowVisitor = {
     }
   }
 };
+
+// If this class declaration or expression implements interfaces, remove
+// the associated tokens.
+function removeImplementedInterfaces(removedNodes, node, ast) {
+  if (node.implements && node.implements.length > 0) {
+    var first = node.implements[0];
+    var last = node.implements[node.implements.length - 1];
+    var idx = findTokenIndex(ast.tokens, first.start);
+    do {
+      idx--;
+    } while (ast.tokens[idx].value !== 'implements');
+
+    var lastIdx = findTokenIndex(ast.tokens, last.start);
+    do {
+      if (ast.tokens[idx].type !== 'CommentBlock' &&
+          ast.tokens[idx].type !== 'CommentLine') {
+        removeNode(removedNodes, ast.tokens[idx]);
+      }
+    } while (idx++ !== lastIdx);
+  }
+}
 
 // Append node to the list of removed nodes, ensuring the order of the nodes
 // in the list.

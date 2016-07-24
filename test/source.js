@@ -42,6 +42,15 @@ class Bar extends Other implements /*.*/ Foo, ISomething {
   }
 }
 
+// Class expression implements interface
+var SomeClass = class Baz implements Foo {
+  prop: any;
+
+  method(): mixed {
+    return;
+  }
+};
+
 // Parametric class
 class Wrapper<T> {
   get(): T {

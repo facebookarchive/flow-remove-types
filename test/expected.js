@@ -42,6 +42,15 @@ class Bar extends Other            /*.*/                 {
   }
 }
 
+// Class expression implements interface
+var SomeClass = class Baz                {
+            
+
+  method()        {
+    return;
+  }
+};
+
 // Parametric class
 class Wrapper    {
   get()    {
