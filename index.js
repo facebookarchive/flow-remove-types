@@ -73,7 +73,7 @@ var removeFlowVisitor = {
   ClassDeclaration: removeImplementedInterfaces,
   ClassExpression: removeImplementedInterfaces,
 
-  Identifier(removedNodes, node, ast) {
+  Identifier: function(removedNodes, node, ast) {
     if (node.optional) {
       // Find the optional token.
       var idx = findTokenIndex(ast.tokens, node.start);
@@ -84,19 +84,19 @@ var removeFlowVisitor = {
     }
   },
 
-  ClassProperty(removedNodes, node) {
+  ClassProperty: function(removedNodes, node) {
     if (!node.value) {
       return removeNode(removedNodes, node)
     }
   },
 
-  ExportNamedDeclaration(removedNodes, node) {
+  ExportNamedDeclaration: function(removedNodes, node) {
     if (node.exportKind === 'type') {
       return removeNode(removedNodes, node);
     }
   },
 
-  ImportDeclaration(removedNodes, node) {
+  ImportDeclaration: function(removedNodes, node) {
     if (node.importKind === 'type') {
       return removeNode(removedNodes, node);
     }
