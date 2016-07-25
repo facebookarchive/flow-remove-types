@@ -1,6 +1,8 @@
 flow-remove-types
 =================
 
+[![Build Status](https://travis-ci.org/leebyron/flow-remove-types.svg?branch=master)](https://travis-ci.org/leebyron/flow-remove-types)
+
 Turn your JavaScript with [Flow](https://flowtype.org/) type annotations into
 standard JavaScript in an instant with no configuration and minimal setup.
 
