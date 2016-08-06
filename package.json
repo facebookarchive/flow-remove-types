@@ -15,7 +15,7 @@
     "url": "http://github.com/leebyron/flow-remove-types.git"
   },
   "scripts": {
-    "test": "DIFF=$(./flow-remove-types test/source.js | diff test/expected.js -); if [ -n \"$DIFF\" ]; then echo \"$DIFF\"; exit 1; fi;",
+    "test": "DIFF=$(./flow-remove-types test/source.js | diff test/expected.js -); if [ -n \"$DIFF\" ]; then echo \"$DIFF\"; exit 1; fi; RES=$(node -e 'require(\"./register\");require(\"./test/test-node-module.js\")'); if [[ \"$RES\" != 42 ]]; then echo 'Node register hook failed'; exit 1; fi;",
     "test-update": "./flow-remove-types test/source.js > test/expected.js"
   },
   "keywords": [
