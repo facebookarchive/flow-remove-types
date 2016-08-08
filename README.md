@@ -57,6 +57,20 @@ fs.writeFileSync('output.js', output);
 **Browserify:** [`unflowify`](https://github.com/leebyron/unflowify)
 
 
+## Use `flow-node`
+
+Wherever you use `node` you can substitute `flow-node` and have a super fast
+flow-types aware evaluator or REPL.
+
+```
+$ flow-node
+> var x: number = 42
+undefined
+> x
+42
+```
+
+
 ## Use the require hook
 
 Using the require hook allows you to automatically compile files on the fly when

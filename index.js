@@ -3,20 +3,26 @@ var babylon = require('babylon');
 /**
  * Given a string JavaScript source which contains Flow types, return a string
  * which has removed those types.
+ *
+ * Options:
+ *
+ *   - checkPragma: (default: true) looks for an @flow pragma before parsing.
  */
-module.exports = function flowRemoveTypes(source) {
+module.exports = function flowRemoveTypes(source, options) {
   // If there's no @flow or @noflow flag, then expect no annotation.
   var pragmaStart = source.indexOf('@flow');
   var pragmaEnd = pragmaStart + 5;
   if (pragmaStart === -1) {
     pragmaStart = source.indexOf('@noflow');
     pragmaEnd = pragmaStart + 7;
-    if (pragmaStart === -1) {
+    if (pragmaStart === -1 && !(options && options.checkPragma === false)) {
       return source;
     }
   }
 
-  var removedNodes = [ { start: pragmaStart, end: pragmaEnd } ];
+  var removedNodes = pragmaStart === -1 ?
+    [] :
+    [ { start: pragmaStart, end: pragmaEnd } ];
 
   // Babylon is one of the sources of truth for Flow syntax. This parse
   // configuration is intended to be as permissive as possible.
@@ -29,6 +35,10 @@ module.exports = function flowRemoveTypes(source) {
   });
 
   visit(ast, removedNodes, removeFlowVisitor);
+
+  if (removedNodes.length === 0) {
+    return source;
+  }
 
   var result = '';
   var lastPos = 0;
