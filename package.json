@@ -5,7 +5,10 @@
   "author": "Lee Byron <lee@leebyron.com> (http://leebyron.com/)",
   "license": "BSD-3-Clause",
   "main": "index.js",
-  "bin": "flow-remove-types",
+  "bin": {
+    "flow-remove-types": "./flow-remove-types",
+    "flow-node": "./flow-node"
+  },
   "homepage": "https://github.com/leebyron/flow-remove-types",
   "bugs": {
     "url": "https://github.com/leebyron/flow-remove-types/issues"
@@ -15,7 +18,7 @@
     "url": "http://github.com/leebyron/flow-remove-types.git"
   },
   "scripts": {
-    "test": "DIFF=$(./flow-remove-types test/source.js | diff test/expected.js -); if [ -n \"$DIFF\" ]; then echo \"$DIFF\"; exit 1; fi; RES=$(node -e 'require(\"./register\");require(\"./test/test-node-module.js\")'); if [[ \"$RES\" != 42 ]]; then echo 'Node register hook failed'; exit 1; fi;",
+    "test": "DIFF=$(./flow-remove-types test/source.js | diff test/expected.js -); if [ -n \"$DIFF\" ]; then echo \"$DIFF\"; exit 1; fi; RES=$(node -e 'require(\"./register\");require(\"./test/test-node-module.js\")'); if [ \"$RES\" != 42 ]; then echo 'Node register hook failed'; exit 1; fi; FLOW_NODE=$(./flow-node ./test/test-node-module.js); if [ \"$FLOW_NODE\" != 42 ]; then echo 'flow-node failed'; exit 1; fi;",
     "test-update": "./flow-remove-types test/source.js > test/expected.js"
   },
   "keywords": [
