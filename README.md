@@ -57,13 +57,15 @@ fs.writeFileSync('output.js', output);
 **Browserify:** [`unflowify`](https://github.com/leebyron/unflowify)
 
 
-## Use require hook
+## Use the require hook
 
-The require hook will bind itself to node's require and automatically compile
-files on the fly:
+Using the require hook allows you to automatically compile files on the fly when
+requiring in node:
 
-  > require('flow-remove-types/register')
-  > require('./some-module-with-flow-type-syntax')
+```js
+require('flow-remove-types/register')
+require('./some-module-with-flow-type-syntax')
+```
 
 
 ## Dead-Simple Transforms
