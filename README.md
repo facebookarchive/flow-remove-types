@@ -57,6 +57,15 @@ fs.writeFileSync('output.js', output);
 **Browserify:** [`unflowify`](https://github.com/leebyron/unflowify)
 
 
+## Use require hook
+
+The require hook will bind itself to node's require and automatically compile
+files on the fly:
+
+  > require('flow-remove-types/register')
+  > require('./some-module-with-flow-type-syntax')
+
+
 ## Dead-Simple Transforms
 
 When `flow-remove-types` removes Flow types, it replaces them with whitespace.
