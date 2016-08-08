@@ -1,6 +1,6 @@
 {
   "name": "flow-remove-types",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Removes Flow type annotations from JavaScript files with speed and simplicity.",
   "author": "Lee Byron <lee@leebyron.com> (http://leebyron.com/)",
   "license": "BSD-3-Clause",
