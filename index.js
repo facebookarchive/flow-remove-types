@@ -167,7 +167,7 @@ function visit(ast, context, visitor) {
       stack = stack.prev;
     } else {
       var node = parent ? parent[keys[index]] : ast.program;
-      if (node && typeof node === 'object') {
+      if (node && typeof node === 'object' && (node.type || node.length && node[0].type)) {
         if (node.type) {
           var visitFn = visitor[node.type];
           if (visitFn && visitFn(context, node, ast) === false) {
@@ -200,6 +200,8 @@ function findTokenIndex(tokens, offset) {
       return ptr;
     }
   }
+
+  return ptr;
 }
 
 // Produce a string full of space characters of a given size.

@@ -14,6 +14,7 @@ var usage = 'Usage: flow-node [options] [ script.js ] [arguments] \n' +
 
 '\nOptions:\n' +
 '  -h, --help            Show this message\n' +
+'  -v, --version         Prints the current version of flow-node\n' +
 '  -e, --eval script     Evaluate script\n' +
 '  -p, --print script    Evaluate script and print result\n' +
 '  -c, --check           Syntax check script without executing\n';
@@ -28,6 +29,9 @@ while (i < process.argv.length) {
   var arg = process.argv[i++];
   if (arg === '-h' || arg === '--help') {
     process.stdout.write(usage);
+    process.exit(0);
+  } else if (arg === '-v' || arg === '--version') {
+    process.stdout.write('v' + require('./package').version);
     process.exit(0);
   } else if (arg === '-e' || arg === '--eval') {
     evalScript = process.argv[i++];
@@ -59,7 +63,11 @@ if (evalScript || printScript) {
   global.exports = evalModule.exports;
   global.module = evalModule;
   global.require = evalModule.require.bind(evalModule);
-  var result = eval(evalScript || printScript, global.__filename);
+  var result = vm.runInThisContext(
+    removeTypes(evalScript || printScript, { checkPragma: false }),
+    { filename: global.__filename }
+  );
+
   if (printScript) {
     process.stdout.write((typeof result === 'string' ? result : util.inspect(result)) + '\n');
   }
@@ -100,18 +108,16 @@ if (evalScript || printScript) {
       var error;
       var result;
       try {
-        result = eval(code, filename);
-      } catch (err) {
-        error = err;
+        var runCode = removeTypes(code, { checkPragma: false });
+        try {
+          result = vm.runInThisContext(runCode, { filename: filename });
+        } catch (runError) {
+          error = runError;
+        }
+      } catch (transformError) {
+        error = repl.Recoverable ? new repl.Recoverable(transformError) : transformError;
       }
       callback(error, result);
     }
   });
-}
-
-function eval(code, filename) {
-  return vm.runInThisContext(
-    removeTypes(code, { checkPragma: false }),
-    { filename: filename }
-  );
 }
