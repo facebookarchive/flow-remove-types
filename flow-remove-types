@@ -8,12 +8,13 @@ var flowRemoveTypes = require('./index');
 var usage = 'Usage: flow-remove-types [options] [sources] \n' +
 
 '\nOptions:\n' +
-'  -h, --help        Show this message\n' +
-'  -v, --version     Prints the current version of flow-remove-types\n' +
-'  -i, --ignore      Paths to ignore, Regular Expression\n' +
-'  -x, --extensions  File extensions to transform\n' +
-'  -o, --out-file    The file path to write transformed file to\n' +
-'  -d, --out-dir     The directory path to write transformed files within\n' +
+'  -h, --help           Show this message\n' +
+'  -v, --version        Prints the current version of flow-remove-types\n' +
+'  -i, --ignore         Paths to ignore, Regular Expression\n' +
+'  -x, --extensions     File extensions to transform\n' +
+'  -o, --out-file       The file path to write transformed file to\n' +
+'  -d, --out-dir        The directory path to write transformed files within\n' +
+'  -c, --check-pragma   Check for @flow & @noflow, always remove flow type anotations when false \n' +
 
 '\nExamples:\n' +
 
@@ -65,6 +66,8 @@ var ignore = /node_modules/;
 var extensions = [ '.js', '.jsx', '.flow', '.es6' ];
 var outDir;
 var outFile;
+var checkPragma;
+var flowRemoveTypesOptions = {};
 var sources = [];
 var i = 2;
 while (i < process.argv.length) {
@@ -83,6 +86,8 @@ while (i < process.argv.length) {
     outFile = process.argv[i++];
   } else if (arg === '-d' || arg === '--out-dir') {
     outDir = process.argv[i++];
+  } else if (arg === '-c' || arg === '--check-pragma') {
+    checkPragma = process.argv[i++];
   } else {
     sources.push(arg);
   }
@@ -95,6 +100,12 @@ if (outDir && outFile) {
 
 if (outDir && sources.length === 0) {
   error('Must specify files when providing --out-dir');
+}
+
+if(checkPragma === "false") {
+  flowRemoveTypesOptions.checkPragma = false;
+} else {
+  flowRemoveTypesOptions.checkPragma = true;
 }
 
 // Ensure all sources exist
@@ -162,7 +173,7 @@ for (var i = 0; i < sources.length; i++) {
 
 function transformSource(content, filepath) {
   try {
-    return flowRemoveTypes(content);
+    return flowRemoveTypes(content, flowRemoveTypesOptions);
   } catch (error) {
     if (error.loc) {
       var line = error.loc.line - 1;
