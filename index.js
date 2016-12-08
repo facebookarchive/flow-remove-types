@@ -282,35 +282,27 @@ function space(size) {
 // with spaces.
 function generateSourceMappings(removedNodes) {
   var mappings = '';
-
-  var genCol = 0;
   var end = { line: 1, column: 0 };
 
   for (var i = 0; i < removedNodes.length; i++) {
     var start = removedNodes[i].loc.start;
-
-    if (start.line === end.line) {
-      genCol = start.column - end.column;
-      if (i && genCol) {
-        mappings += ',';
-      }
-    } else {
-      genCol = start.column;
-      for (var l = end.line; l !== start.line; l++) {
+    var lineDiff = start.line - end.line;
+    var columnDiff = start.column - end.column;
+    if (lineDiff) {
+      for (var l = 0; l !== lineDiff; l++) {
         mappings += ';';
       }
-    }
-
-    var lineDiff = start.line - end.line;
-    if (lineDiff || genCol) {
-      mappings += vlq.encode([ genCol, 0, lineDiff, start.column - end.column ]);
+      mappings += vlq.encode([ start.column, 0, lineDiff, columnDiff ]);
+    } else if (columnDiff) {
+      if (i) {
+        mappings += ',';
+      }
+      mappings += vlq.encode([ columnDiff, 0, lineDiff, columnDiff ]);
     }
 
     end = removedNodes[i].loc.end;
-    genCol = 0;
-
     mappings += ',';
-    mappings += vlq.encode([ genCol, 0, end.line - start.line, end.column - start.column ]);
+    mappings += vlq.encode([ 0, 0, end.line - start.line, end.column - start.column ]);
   }
 
   return mappings;
