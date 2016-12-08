@@ -13,7 +13,9 @@
     "index.js",
     "register.js",
     "flow-remove-types",
-    "flow-node"
+    "flow-node",
+    "LICENSE",
+    "PATENTS"
   ],
   "homepage": "https://github.com/leebyron/flow-remove-types",
   "bugs": {
