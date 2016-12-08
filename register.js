@@ -1,4 +1,9 @@
-var removeTypes = require('./index');
+var flowRemoveTypes = require('./index');
+
+var options = { checkPragma: true };
+module.exports = function setOptions(newOptions) {
+  options = newOptions;
+}
 
 // Swizzle Module#_compile on each applicable module instance.
 // NOTE: if using alongside Babel or another require-hook which simply
@@ -13,7 +18,7 @@ exts.forEach(function (ext) {
     if (filename.indexOf('/node_modules/') === -1) {
       var super_compile = module._compile;
       module._compile = function _compile(code, filename) {
-        super_compile.call(this, removeTypes(code), filename);
+        super_compile.call(this, flowRemoveTypes(code, options), filename);
       };
     }
     superLoader(module, filename);

@@ -93,6 +93,12 @@ As always, don't forget to use `flow-remove-types` to compile files before
 distributing your code on npm, as using the require hook affects the whole
 runtime and not just your module.
 
+You can also provide options to the require hook:
+
+```js
+// Transforms all files, not just those with a "@flow" pragma.
+require('flow-remove-types/register')({ checkPragma: false })
+```
 
 ## Dead-Simple Transforms
 

@@ -7,8 +7,7 @@ var repl = require('repl');
 var util = require('util');
 var vm = require('vm');
 
-var removeTypes = require('./index');
-require('./register');
+var flowRemoveTypes = require('./index');
 
 var usage = 'Usage: flow-node [options] [ script.js ] [arguments] \n' +
 
@@ -18,11 +17,13 @@ var usage = 'Usage: flow-node [options] [ script.js ] [arguments] \n' +
 '  -e, --eval script     Evaluate script\n' +
 '  -p, --print script    Evaluate script and print result\n' +
 '  -c, --check           Syntax check script without executing\n';
+'  -a, --all             Interpret all files as flow-typed, even if they do not contain a @flow pragma\n';
 
 // Collect arguments
 var evalScript;
 var printScript;
 var checkSource;
+var checkPragma = true;
 var source;
 var i = 2;
 while (i < process.argv.length) {
@@ -47,11 +48,15 @@ while (i < process.argv.length) {
     }
   } else if (arg === '-c' || arg === '--check') {
     checkSource = true;
+  } else if (arg === '-a' || arg === '--all') {
+    checkPragma = false;
   } else if (arg[0] !== '-') {
     source = arg;
     break;
   }
 }
+
+require('./register')({ checkPragma: checkPragma });
 
 // Evaluate and possibly also print a script.
 if (evalScript || printScript) {
@@ -64,7 +69,7 @@ if (evalScript || printScript) {
   global.module = evalModule;
   global.require = evalModule.require.bind(evalModule);
   var result = vm.runInThisContext(
-    removeTypes(evalScript || printScript, { checkPragma: false }),
+    flowRemoveTypes(evalScript || printScript, { checkPragma: false }),
     { filename: global.__filename }
   );
 
@@ -76,7 +81,7 @@ if (evalScript || printScript) {
 } else if (source && checkSource) {
   var code = fs.readFileSync(source, 'utf8');
   try {
-    removeTypes(code);
+    flowRemoveTypes(code, { checkPragma: checkPragma });
   } catch (error) {
     var lines = code.split(/\r\n?|\n|\u2028|\u2029/);
     process.stdout.write(source + ':' + error.loc.line + '\n');
@@ -108,7 +113,7 @@ if (evalScript || printScript) {
       var error;
       var result;
       try {
-        var runCode = removeTypes(code, { checkPragma: false });
+        var runCode = flowRemoveTypes(code, { checkPragma: false });
         try {
           result = vm.runInThisContext(runCode, { filename: filename });
         } catch (runError) {
