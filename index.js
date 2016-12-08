@@ -1,4 +1,5 @@
 var babylon = require('babylon');
+var vlq = require('vlq');
 
 /**
  * Given a string JavaScript source which contains Flow types, return a string
@@ -8,6 +9,18 @@ var babylon = require('babylon');
  *
  *   - all: (default: false)
  *     If true, bypasses looking for an @flow pragma comment before parsing.
+ *
+ *   - pretty: (default: false)
+ *     If true, removes types completely rather than replacing with spaces.
+ *     This may require using source maps.
+ *
+ * Returns an object with two methods:
+ *
+ *   - .toString()
+ *     Returns the transformed source code.
+ *
+ *   - .generateMap()
+ *     Returns a v3 source map.
  */
 module.exports = function flowRemoveTypes(source, options) {
   // Options
@@ -19,19 +32,32 @@ module.exports = function flowRemoveTypes(source, options) {
   }
 
   // If there's no @flow or @noflow flag, then expect no annotation.
-  var pragmaStart = source.indexOf('@flow');
-  var pragmaEnd = pragmaStart + 5;
+  var pragmaStart = source.indexOf('@' + 'flow');
+  var pragmaSize = 5;
   if (pragmaStart === -1) {
-    pragmaStart = source.indexOf('@noflow');
-    pragmaEnd = pragmaStart + 7;
+    pragmaStart = source.indexOf('@' + 'noflow');
+    pragmaSize = 7;
     if (pragmaStart === -1 && !all) {
-      return source;
+      return resultPrinter(options, source);
     }
   }
 
-  var removedNodes = pragmaStart === -1 ?
-    [] :
-    [ { start: pragmaStart, end: pragmaEnd } ];
+  var removedNodes = [];
+
+  // Remove the flow pragma.
+  if (pragmaStart !== -1) {
+    var prePragmaLines = source.slice(0, pragmaStart).split('\n');
+    var pragmaLine = prePragmaLines.length;
+    var pragmaCol = prePragmaLines[pragmaLine - 1].length;
+    removedNodes.push({
+      start: pragmaStart,
+      end: pragmaStart + pragmaSize,
+      loc: {
+        start: { line: pragmaLine, column: pragmaCol },
+        end: { line: pragmaLine, column: pragmaCol + pragmaSize }
+      },
+    })
+  }
 
   // Babylon is one of the sources of truth for Flow syntax. This parse
   // configuration is intended to be as permissive as possible.
@@ -45,31 +71,52 @@ module.exports = function flowRemoveTypes(source, options) {
 
   visit(ast, removedNodes, removeFlowVisitor);
 
-  if (removedNodes.length === 0) {
-    return source;
-  }
+  return resultPrinter(options, source, removedNodes);
+}
 
-  var result = '';
-  var lastPos = 0;
+function resultPrinter(options, source, removedNodes) {
+  // Options
+  var pretty = Boolean(options && options.pretty);
 
-  // Step through the removed nodes, building up the resulting string.
-  for (var i = 0; i < removedNodes.length; i++) {
-    var node = removedNodes[i];
-    result += source.slice(lastPos, node.start);
-    var toReplace = source.slice(node.start, node.end);
-    lastPos = node.end;
-    if (!node.loc || node.loc.start.line === node.loc.end.line) {
-      result += space(toReplace.length);
-    } else {
-      var toReplaceLines = toReplace.split(LINE_RX);
-      result += space(toReplaceLines[0].length);
-      for (var j = 1; j < toReplaceLines.length; j += 2) {
-        result += toReplaceLines[j] + space(toReplaceLines[j + 1].length);
+  return {
+    toString: function () {
+      if (!removedNodes || removedNodes.length === 0) {
+        return source;
       }
+
+      var result = '';
+      var lastPos = 0;
+
+      // Step through the removed nodes, building up the resulting string.
+      for (var i = 0; i < removedNodes.length; i++) {
+        var node = removedNodes[i];
+        result += source.slice(lastPos, node.start);
+        lastPos = node.end;
+        if (!pretty) {
+          var toReplace = source.slice(node.start, node.end);
+          if (!node.loc || node.loc.start.line === node.loc.end.line) {
+            result += space(toReplace.length);
+          } else {
+            var toReplaceLines = toReplace.split(LINE_RX);
+            result += space(toReplaceLines[0].length);
+            for (var j = 1; j < toReplaceLines.length; j += 2) {
+              result += toReplaceLines[j] + space(toReplaceLines[j + 1].length);
+            }
+          }
+        }
+      }
+
+      return result += source.slice(lastPos);
+    },
+    generateMap: function () {
+      return {
+        version: 3,
+        sources: [ 'source.js' ],
+        names: [],
+        mappings: pretty ? generateSourceMappings(removedNodes) : ''
+      };
     }
   }
-
-  return result += source.slice(lastPos);
 }
 
 var LINE_RX = /(\r\n?|\n|\u2028|\u2029)/;
@@ -229,4 +276,42 @@ function space(size) {
     sp += sp;
   }
   return result;
+}
+
+// Generate a source map when *removing* nodes rather than replacing them
+// with spaces.
+function generateSourceMappings(removedNodes) {
+  var mappings = '';
+
+  var genCol = 0;
+  var end = { line: 1, column: 0 };
+
+  for (var i = 0; i < removedNodes.length; i++) {
+    var start = removedNodes[i].loc.start;
+
+    if (start.line === end.line) {
+      genCol = start.column - end.column;
+      if (i && genCol) {
+        mappings += ',';
+      }
+    } else {
+      genCol = start.column;
+      for (var l = end.line; l !== start.line; l++) {
+        mappings += ';';
+      }
+    }
+
+    var lineDiff = start.line - end.line;
+    if (lineDiff || genCol) {
+      mappings += vlq.encode([ genCol, 0, lineDiff, start.column - end.column ]);
+    }
+
+    end = removedNodes[i].loc.end;
+    genCol = 0;
+
+    mappings += ',';
+    mappings += vlq.encode([ genCol, 0, end.line - start.line, end.column - start.column ]);
+  }
+
+  return mappings;
 }

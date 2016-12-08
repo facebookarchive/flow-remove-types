@@ -46,7 +46,7 @@ var fs = require('fs');
 
 var input = fs.readFileSync('input.js', 'utf8');
 var output = flowRemoveTypes(input);
-fs.writeFileSync('output.js', output);
+fs.writeFileSync('output.js', output.toString());
 ```
 
 
@@ -154,6 +154,27 @@ export class MyClass    extends SomeClass                          {
   }
 
 }
+```
+
+### Pretty Transform
+
+Rather not have the whitespace? Pass the `--pretty` flag to remove the whitespace.
+
+```
+flow-remove-types --pretty source.js
+```
+
+Or using the JS API:
+
+```js
+var flowRemoveTypes = require('flow-remove-types');
+var fs = require('fs');
+
+var input = fs.readFileSync('input.js', 'utf8');
+var output = flowRemoveTypes(input, { pretty: true });
+fs.writeFileSync('output.js', output.toString());
+var sourceMap = output.generateMap();
+fs.writeFileSync('output.js.map', JSON.stringify(sourceMap));
 ```
 
 

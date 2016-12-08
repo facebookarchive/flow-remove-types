@@ -15,6 +15,8 @@ var usage = 'Usage: flow-remove-types [options] [sources] \n' +
 '  -o, --out-file    The file path to write transformed file to\n' +
 '  -d, --out-dir     The directory path to write transformed files within\n' +
 '  -a, --all         Transform all files, not just those with a @flow comment\n' +
+'  -p, --pretty      Remove flow types without replacing with spaces, \n' +
+'                    producing prettier output but may require using source maps\n' +
 
 '\nExamples:\n' +
 
@@ -67,6 +69,7 @@ var extensions = [ '.js', '.jsx', '.flow', '.es6' ];
 var outDir;
 var outFile;
 var all;
+var pretty;
 var sources = [];
 var i = 2;
 while (i < process.argv.length) {
@@ -87,6 +90,8 @@ while (i < process.argv.length) {
     outDir = process.argv[i++];
   } else if (arg === '-a' || arg === '--all') {
     all = true;
+  } else if (arg === '-p' || arg === '--pretty') {
+    pretty = true;
   } else {
     sources.push(arg);
   }
@@ -159,14 +164,14 @@ for (var i = 0; i < sources.length; i++) {
       fs.writeFileSync(outFile, result);
       process.stdout.write(source + '\n \u21B3 \033[32m' + outFile + '\033[0m\n');
     } else {
-      process.stdout.write(result);
+      process.stdout.write(result.toString());
     }
   }
 }
 
 function transformSource(content, filepath) {
   try {
-    return flowRemoveTypes(content, { all: all });
+    return flowRemoveTypes(content, { all: all, pretty: pretty }).toString();
   } catch (error) {
     if (error.loc) {
       var line = error.loc.line - 1;
