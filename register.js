@@ -1,6 +1,6 @@
 var flowRemoveTypes = require('./index');
 
-var options = { checkPragma: true };
+var options;
 module.exports = function setOptions(newOptions) {
   options = newOptions;
 }

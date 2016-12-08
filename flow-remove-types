@@ -14,7 +14,7 @@ var usage = 'Usage: flow-remove-types [options] [sources] \n' +
 '  -x, --extensions  File extensions to transform\n' +
 '  -o, --out-file    The file path to write transformed file to\n' +
 '  -d, --out-dir     The directory path to write transformed files within\n' +
-'  -a, --all         Transform all files, even if they do not contain a @flow pragma\n' +
+'  -a, --all         Transform all files, not just those with a @flow comment\n' +
 
 '\nExamples:\n' +
 
@@ -66,7 +66,7 @@ var ignore = /node_modules/;
 var extensions = [ '.js', '.jsx', '.flow', '.es6' ];
 var outDir;
 var outFile;
-var checkPragma = true;
+var all;
 var sources = [];
 var i = 2;
 while (i < process.argv.length) {
@@ -86,7 +86,7 @@ while (i < process.argv.length) {
   } else if (arg === '-d' || arg === '--out-dir') {
     outDir = process.argv[i++];
   } else if (arg === '-a' || arg === '--all') {
-    checkPragma = false;
+    all = true;
   } else {
     sources.push(arg);
   }
@@ -166,7 +166,7 @@ for (var i = 0; i < sources.length; i++) {
 
 function transformSource(content, filepath) {
   try {
-    return flowRemoveTypes(content, { checkPragma: checkPragma });
+    return flowRemoveTypes(content, { all: all });
   } catch (error) {
     if (error.loc) {
       var line = error.loc.line - 1;

@@ -6,16 +6,25 @@ var babylon = require('babylon');
  *
  * Options:
  *
- *   - checkPragma: (default: true) looks for an @flow pragma before parsing.
+ *   - all: (default: false)
+ *     If true, bypasses looking for an @flow pragma comment before parsing.
  */
 module.exports = function flowRemoveTypes(source, options) {
+  // Options
+  var all = Boolean(options && options.all);
+  if (options && options.checkPragma) {
+    throw new Error(
+      'flow-remove-types: the "checkPragma" option has been replaced by "all".'
+    );
+  }
+
   // If there's no @flow or @noflow flag, then expect no annotation.
   var pragmaStart = source.indexOf('@flow');
   var pragmaEnd = pragmaStart + 5;
   if (pragmaStart === -1) {
     pragmaStart = source.indexOf('@noflow');
     pragmaEnd = pragmaStart + 7;
-    if (pragmaStart === -1 && !(options && options.checkPragma === false)) {
+    if (pragmaStart === -1 && !all) {
       return source;
     }
   }

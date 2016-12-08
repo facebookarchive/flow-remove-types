@@ -96,8 +96,8 @@ runtime and not just your module.
 You can also provide options to the require hook:
 
 ```js
-// Transforms all files, not just those with a "@flow" pragma.
-require('flow-remove-types/register')({ checkPragma: false })
+// Transforms all files, not just those with a "@flow" comment.
+require('flow-remove-types/register')({ all: true })
 ```
 
 ## Dead-Simple Transforms
