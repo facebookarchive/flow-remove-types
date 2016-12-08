@@ -52,9 +52,17 @@ fs.writeFileSync('output.js', output);
 
 ## Use in Build Systems:
 
-**Rollup**: [`rollup-plugin-flow`](https://github.com/leebyron/rollup-plugin-flow)
+**Rollup:** [`rollup-plugin-flow`](https://github.com/leebyron/rollup-plugin-flow)
 
 **Browserify:** [`unflowify`](https://github.com/leebyron/unflowify)
+
+**Webpack:** [`remove-flow-types-loader`](https://github.com/conorhastings/remove-flow-types-loader)
+
+
+## Use with existing development tools
+
+ * ESLint: [eslint-plugin-flowtype](https://github.com/gajus/eslint-plugin-flowtype)
+ * Mocha: `mocha -r flow-remove-types/register`
 
 
 ## Use `flow-node`
