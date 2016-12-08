@@ -74,12 +74,16 @@ undefined
 ## Use the require hook
 
 Using the require hook allows you to automatically compile files on the fly when
-requiring in node:
+requiring in node, useful during development:
 
 ```js
 require('flow-remove-types/register')
 require('./some-module-with-flow-type-syntax')
 ```
+
+As always, don't forget to use `flow-remove-types` to compile files before
+distributing your code on npm, as using the require hook affects the whole
+runtime and not just your module.
 
 
 ## Dead-Simple Transforms
