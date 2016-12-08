@@ -26,8 +26,8 @@
     "url": "http://github.com/leebyron/flow-remove-types.git"
   },
   "scripts": {
-    "test": "DIFF=$(./flow-remove-types test/source.js | diff test/expected.js -); if [ -n \"$DIFF\" ]; then echo \"$DIFF\"; exit 1; fi; RES=$(node -e 'require(\"./register\");require(\"./test/test-node-module.js\")'); if [ \"$RES\" != 42 ]; then echo 'Node register hook failed'; exit 1; fi; FLOW_NODE=$(./flow-node ./test/test-node-module.js); if [ \"$FLOW_NODE\" != 42 ]; then echo 'flow-node failed'; exit 1; fi;",
-    "test-update": "./flow-remove-types test/source.js > test/expected.js"
+    "test": "DIFF=$(./flow-remove-types test/source.js | diff test/expected.js -); if [ -n \"$DIFF\" ]; then echo \"$DIFF\"; exit 1; fi; DIFF=$(./flow-remove-types -p test/source.js | diff test/expected-pretty.js -); if [ -n \"$DIFF\" ]; then echo \"$DIFF\"; exit 1; fi; DIFF=$(./flow-remove-types -p -m test/source.js | diff test/expected-pretty.js.map -); if [ -n \"$DIFF\" ]; then echo \"$DIFF\"; exit 1; fi; RES=$(node -e 'require(\"./register\");require(\"./test/test-node-module.js\")'); if [ \"$RES\" != 42 ]; then echo 'Node register hook failed'; exit 1; fi; FLOW_NODE=$(./flow-node ./test/test-node-module.js); if [ \"$FLOW_NODE\" != 42 ]; then echo 'flow-node failed'; exit 1; fi;",
+    "test-update": "./flow-remove-types test/source.js > test/expected.js; ./flow-remove-types -p test/source.js > test/expected-pretty.js; ./flow-remove-types -p -m test/source.js > test/expected-pretty.js.map"
   },
   "keywords": [
     "flow",
@@ -38,6 +38,7 @@
     "es6"
   ],
   "dependencies": {
-    "babylon": "^6.8.4"
+    "babylon": "^6.8.4",
+    "vlq": "^0.2.1"
   }
 }

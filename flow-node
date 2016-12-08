@@ -69,7 +69,7 @@ if (evalScript || printScript) {
   global.module = evalModule;
   global.require = evalModule.require.bind(evalModule);
   var result = vm.runInThisContext(
-    flowRemoveTypes(evalScript || printScript, { all: true }),
+    flowRemoveTypes(evalScript || printScript, { all: true }).toString(),
     { filename: global.__filename }
   );
 
@@ -113,7 +113,7 @@ if (evalScript || printScript) {
       var error;
       var result;
       try {
-        var runCode = flowRemoveTypes(code, { all: true });
+        var runCode = flowRemoveTypes(code, { all: true }).toString();
         try {
           result = vm.runInThisContext(runCode, { filename: filename });
         } catch (runError) {

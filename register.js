@@ -18,7 +18,7 @@ exts.forEach(function (ext) {
     if (filename.indexOf('/node_modules/') === -1) {
       var super_compile = module._compile;
       module._compile = function _compile(code, filename) {
-        super_compile.call(this, flowRemoveTypes(code, options), filename);
+        super_compile.call(this, flowRemoveTypes(code, options).toString(), filename);
       };
     }
     superLoader(module, filename);
