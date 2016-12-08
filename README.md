@@ -52,10 +52,26 @@ fs.writeFileSync('output.js', output);
 
 ## Use in Build Systems:
 
-**Rollup**: [`rollup-plugin-flow`](https://github.com/leebyron/rollup-plugin-flow)
+**Rollup:** [`rollup-plugin-flow`](https://github.com/leebyron/rollup-plugin-flow)
 
 **Browserify:** [`unflowify`](https://github.com/leebyron/unflowify)
 
+**Webpack:** [`remove-flow-types-loader`](https://github.com/conorhastings/remove-flow-types-loader)
+
+
+## Use with ESLint
+
+```
+npm install --global eslint-plugin-flow-remove-types
+```
+
+Then edit your `.eslintrc` file to include:
+
+```
+{
+  "plugins": ["flow-remove-types"]
+}
+```
 
 ## Use `flow-node`
 
