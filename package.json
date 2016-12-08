@@ -9,6 +9,12 @@
     "flow-remove-types": "./flow-remove-types",
     "flow-node": "./flow-node"
   },
+  "files": [
+    "index.js",
+    "register.js",
+    "flow-remove-types",
+    "flow-node"
+  ],
   "homepage": "https://github.com/leebyron/flow-remove-types",
   "bugs": {
     "url": "https://github.com/leebyron/flow-remove-types/issues"
