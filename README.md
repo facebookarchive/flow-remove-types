@@ -2,7 +2,7 @@ flow-remove-types
 =================
 
 [![npm](https://img.shields.io/npm/v/flow-remove-types.svg?maxAge=86400)](https://www.npmjs.com/package/flow-remove-types)
-[![Build Status](https://img.shields.io/travis/leebyron/flow-remove-types.svg?style=flat&label=travis&branch=master)](https://travis-ci.org/leebyron/flow-remove-types)
+[![Build Status](https://img.shields.io/travis/flowtype/flow-remove-types.svg?style=flat&label=travis&branch=master)](https://travis-ci.org/flowtype/flow-remove-types)
 
 Turn your JavaScript with [Flow](https://flowtype.org/) type annotations into
 standard JavaScript in an instant with no configuration and minimal setup.
