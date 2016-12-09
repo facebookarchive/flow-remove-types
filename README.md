@@ -100,6 +100,15 @@ You can also provide options to the require hook:
 require('flow-remove-types/register')({ all: true })
 ```
 
+Use options to define exactly which files to `include` or `exclude` with regular
+expressions. All files are included by default except those found in the
+`node_modules` folder, which is excluded by default.
+
+```js
+require('flow-remove-types/register')({ include: /\/custom_path\// })
+```
+
+
 ## Dead-Simple Transforms
 
 When `flow-remove-types` removes Flow types, it replaces them with whitespace.
