@@ -7,4 +7,7 @@
 ./flow-remove-types --pretty test/source.js > test/expected-pretty.js;
 
 # Test expected source maps with --pretty --sourcemaps
-./flow-remove-types -p -m test/source.js > test/expected-pretty.js.map
+./flow-remove-types --pretty --sourcemaps test/source.js -d test/expected-with-maps;
+
+# Test expected source maps with --pretty --sourcemaps inline
+./flow-remove-types --pretty --sourcemaps inline test/source.js > test/expected-pretty-inlinemap.js;
