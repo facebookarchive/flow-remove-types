@@ -161,7 +161,7 @@ export class MyClass    extends SomeClass                          {
 Rather not have the whitespace? Pass the `--pretty` flag to remove the whitespace.
 
 ```
-flow-remove-types --pretty source.js
+flow-remove-types --pretty --sourcemaps source.js
 ```
 
 Or using the JS API:
