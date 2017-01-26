@@ -282,6 +282,10 @@ function space(size) {
 // with spaces.
 function generateSourceMappings(removedNodes) {
   var mappings = '';
+  if (!removedNodes || removedNodes.length === '') {
+    return mappings;
+  }
+
   var end = { line: 1, column: 0 };
 
   for (var i = 0; i < removedNodes.length; i++) {
