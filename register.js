@@ -3,9 +3,11 @@ var flowRemoveTypes = require('./index');
 // Supported options:
 //
 //   - all: Transform all files, not just those with a @flow comment.
-//   - includes: A Regexp to determine which files should be transformed.
-//   - excludes: A Regexp to determine which files should not be transformed,
-//               defaults to ignoring /node_modules/, set to null to excludes nothing.
+//   - includes: A Regexp/String to determine which files should be transformed.
+//               (alias: include)
+//   - excludes: A Regexp/String to determine which files should not be
+//               transformed, defaults to ignoring /node_modules/, provide null
+//               to exclude nothing. (alias: exclude)
 var options;
 module.exports = function setOptions(newOptions) {
   options = newOptions;
@@ -32,7 +34,33 @@ exts.forEach(function (ext) {
 });
 
 function shouldTransform(filename, options) {
-  var includes = options && options.includes;
-  var excludes = options && 'excludes' in options ? options.excludes : /\/node_modules\//;
-  return (!includes || include.test(filename)) && !(excludes && excludes.test(filename));
+  var includes = options && regexpPattern(options.includes || options.include);
+  var excludes =
+    options && 'excludes' in options ? regexpPattern(options.excludes) :
+    options && 'exclude' in options ? regexpPattern(options.exclude) :
+    /\/node_modules\//;
+  return (!includes || includes.test(filename)) && !(excludes && excludes.test(filename));
+}
+
+// Given a null | string | RegExp | any, returns null | Regexp or throws a
+// more helpful error.
+function regexpPattern(pattern) {
+  if (!pattern) {
+    return pattern;
+  }
+  // A very simplified glob transform which allows passing legible strings like
+  // "myPath/*.js" instead of a harder to read RegExp like /\/myPath\/.*\.js/.
+  if (typeof pattern === 'string') {
+    pattern = pattern.replace(/\./g, '\\.').replace(/\*/g, '.*');
+    if (pattern[0] !== '/') {
+      pattern = '/' + pattern;
+    }
+    return new RegExp(pattern);
+  }
+  if (typeof pattern.test === 'function') {
+    return pattern;
+  }
+  throw new Error(
+    'flow-remove-types: includes and excludes must be RegExp or path strings. Got: ' + pattern
+  );
 }

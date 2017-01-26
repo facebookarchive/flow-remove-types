@@ -89,10 +89,6 @@ require('flow-remove-types/register')
 require('./some-module-with-flow-type-syntax')
 ```
 
-As always, don't forget to use `flow-remove-types` to compile files before
-distributing your code on npm, as using the require hook affects the whole
-runtime and not just your module.
-
 You can also provide options to the require hook:
 
 ```js
@@ -100,13 +96,18 @@ You can also provide options to the require hook:
 require('flow-remove-types/register')({ all: true })
 ```
 
-Use options to define exactly which files to `include` or `exclude` with regular
+Use options to define exactly which files to `includes` or `excludes` with regular
 expressions. All files are included by default except those found in the
 `node_modules` folder, which is excluded by default.
 
 ```js
-require('flow-remove-types/register')({ include: /\/custom_path\// })
+require('flow-remove-types/register')({ includes: /\/custom_path\// })
 ```
+
+> #### Don't use the require hook in packages distributed on NPM
+> As always, don't forget to use `flow-remove-types` to compile files before distributing
+> your code on npm, as using the require hook affects the whole runtime and not
+> just your module and may hurt the runtime performance of code that includes it.
 
 
 ## Dead-Simple Transforms
