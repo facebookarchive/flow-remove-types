@@ -3,13 +3,13 @@
 // Regular import
 import {
   Something,
-  
-  } from 'some-module';
+
+} from 'some-module';
 
 // Import types
 
 // Typed function
-async function test(x, y /*.*/  /*.*/ , z /*.*/  /*.*/  = 123) {
+async function test(x, y /*.*/ /*.*/ , z /*.*/ /*.*/ = 123) {
   // Typed expression
   return await (x);
 }
@@ -21,20 +21,20 @@ async function test(x, y /*.*/  /*.*/ , z /*.*/  /*.*/  = 123) {
 // Interface extends
 
 // Implements interface
-class Bar extends Other  /*.*/   {
+class Bar extends Other /*.*/ {
   // Class Property with default value
   answer = 42;
 
   // Class Property
-  
+
   method() {
     return;
   }
 }
 
 // Class expression implements interface
-var SomeClass = class Baz   {
-  
+var SomeClass = class Baz {
+
   method() {
     return;
   }
@@ -87,9 +87,9 @@ var someObj = {
 // Example from README
 import SomeClass from 'some-module'
 
-export class MyClass extends SomeClass   {
+export class MyClass extends SomeClass {
 
-  
+
   constructor(value) {
     this.value = value
   }
