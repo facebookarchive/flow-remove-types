@@ -1,7 +1,11 @@
 /*       */
 
 // Regular import
-import { Something } from 'some-module';
+import {
+  Something,
+                
+                       
+} from 'some-module';
 
 // Import types
                                             
