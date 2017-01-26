@@ -69,7 +69,14 @@ module.exports = function flowRemoveTypes(source, options) {
     plugins: [ '*', 'jsx', 'flow' ],
   });
 
-  visit(ast, removedNodes, removeFlowVisitor);
+  var context = {
+    ast: ast,
+    source: source,
+    removedNodes: removedNodes,
+    pretty: Boolean(options && options.pretty)
+  };
+
+  visit(ast, context, removeFlowVisitor);
 
   return resultPrinter(options, source, removedNodes);
 }
@@ -139,39 +146,39 @@ var removeFlowVisitor = {
   ClassDeclaration: removeImplementedInterfaces,
   ClassExpression: removeImplementedInterfaces,
 
-  Identifier: function (removedNodes, node, ast) {
+  Identifier: function (context, node, ast) {
     if (node.optional) {
       // Find the optional token.
       var idx = findTokenIndex(ast.tokens, node.start);
       do {
         idx++;
       } while (ast.tokens[idx].type.label !== '?');
-      removeNode(removedNodes, ast.tokens[idx]);
+      removeNode(context, ast.tokens[idx]);
     }
   },
 
-  ClassProperty: function (removedNodes, node) {
+  ClassProperty: function (context, node) {
     if (!node.value) {
-      return removeNode(removedNodes, node)
+      return removeNode(context, node)
     }
   },
 
-  ExportNamedDeclaration: function (removedNodes, node) {
+  ExportNamedDeclaration: function (context, node) {
     if (node.exportKind === 'type') {
-      return removeNode(removedNodes, node);
+      return removeNode(context, node);
     }
   },
 
-  ImportDeclaration: function (removedNodes, node) {
+  ImportDeclaration: function (context, node) {
     if (node.importKind === 'type') {
-      return removeNode(removedNodes, node);
+      return removeNode(context, node);
     }
   }
 };
 
 // If this class declaration or expression implements interfaces, remove
 // the associated tokens.
-function removeImplementedInterfaces(removedNodes, node, ast) {
+function removeImplementedInterfaces(context, node, ast) {
   if (node.implements && node.implements.length > 0) {
     var first = node.implements[0];
     var last = node.implements[node.implements.length - 1];
@@ -184,7 +191,7 @@ function removeImplementedInterfaces(removedNodes, node, ast) {
     do {
       if (ast.tokens[idx].type !== 'CommentBlock' &&
           ast.tokens[idx].type !== 'CommentLine') {
-        removeNode(removedNodes, ast.tokens[idx]);
+        removeNode(context, ast.tokens[idx]);
       }
     } while (idx++ !== lastIdx);
   }
@@ -192,18 +199,61 @@ function removeImplementedInterfaces(removedNodes, node, ast) {
 
 // Append node to the list of removed nodes, ensuring the order of the nodes
 // in the list.
-function removeNode(removedNodes, node) {
+function removeNode(context, node) {
+  var removedNodes = context.removedNodes;
   var length = removedNodes.length;
   var index = length;
+
+  // Check for line's trailing space to be removed.
+  var lineNode = context.pretty ? getTrailingLineNode(context, node) : null;
+
   while (index > 0 && removedNodes[index - 1].end > node.start) {
     index--;
   }
+
   if (index === length) {
-    removedNodes.push(node);
+    if (lineNode) {
+      removedNodes.push(node, lineNode);
+    } else {
+      removedNodes.push(node);
+    }
   } else {
-    removedNodes.splice(index, 0, node);
+    if (lineNode) {
+      removedNodes.splice(index, 0, node, lineNode);
+    } else {
+      removedNodes.splice(index, 0, node);
+    }
   }
+
   return false;
+}
+
+function getTrailingLineNode(state, node) {
+  var source = state.source;
+  var start = node.end;
+  var end = start;
+  while (source[end] === ' ' || source[end] === '\t') {
+    end++;
+  }
+
+  // Remove all space including the line break if this token was alone on the line.
+  if (source[end] === '\n' || source[end] === '\r') {
+    if (source[end] === '\r' && source[end + 1] === '\n') {
+      end++;
+    }
+    end++;
+
+    var ast = state.ast;
+    var idx = findTokenIndex(ast.tokens, node.start);
+    var prevToken = ast.tokens[idx - 1];
+    if (prevToken.loc.end.line !== node.loc.end.line) {
+      return {
+        start: start,
+        end: end,
+        loc: { start: node.loc.end, end: node.loc.end }
+      };
+    }
+  }
 }
 
 // Given the AST output of babylon parse, walk through in a depth-first order,

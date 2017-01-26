@@ -5,7 +5,6 @@ import { Something } from 'some-module';
 
 // Import types
 
-
 // Typed function
 async function test(x, y /*.*/  /*.*/ , z /*.*/  /*.*/  = 123) {
   // Typed expression
@@ -14,12 +13,9 @@ async function test(x, y /*.*/  /*.*/ , z /*.*/  /*.*/  = 123) {
 
 // Interface
 
-
 // Exported interface
 
-
 // Interface extends
-
 
 // Implements interface
 class Bar extends Other  /*.*/   {
@@ -28,7 +24,6 @@ class Bar extends Other  /*.*/   {
 
   // Class Property
   
-
   method() {
     return;
   }
@@ -37,7 +32,6 @@ class Bar extends Other  /*.*/   {
 // Class expression implements interface
 var SomeClass = class Baz   {
   
-
   method() {
     return;
   }
@@ -61,33 +55,24 @@ class StringWrapper extends Wrapper {
 
 // Declare class
 
-
 // Declare funtion
-
 
 // Declare interface
 
-
 // Declare module
-
 
 // Declare type alias
 
-
 // Declare variable
-
 
 // Type alias
 
-
 // Export type
-
 
 // Regular export
 export { Wrapper };
 
 // Exported type alias
-
 
 // Object with types within
 var someObj = {
@@ -99,11 +84,9 @@ var someObj = {
 // Example from README
 import SomeClass from 'some-module'
 
-
 export class MyClass extends SomeClass   {
 
   
-
   constructor(value) {
     this.value = value
   }
