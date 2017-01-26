@@ -1,7 +1,11 @@
 /* @flow */
 
 // Regular import
-import { Something } from 'some-module';
+import {
+  Something,
+  type SomeType,
+  typeof SomeOtherThing
+} from 'some-module';
 
 // Import types
 import type { SomeType } from 'some-module';

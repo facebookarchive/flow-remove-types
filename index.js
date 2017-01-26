@@ -164,14 +164,31 @@ var removeFlowVisitor = {
   },
 
   ExportNamedDeclaration: function (context, node) {
-    if (node.exportKind === 'type') {
+    if (node.exportKind === 'type' || node.exportKind === 'typeof') {
       return removeNode(context, node);
     }
   },
 
   ImportDeclaration: function (context, node) {
-    if (node.importKind === 'type') {
+    if (node.importKind === 'type' || node.importKind === 'typeof') {
       return removeNode(context, node);
+    }
+  },
+
+  ImportSpecifier: function(context, node) {
+    if (node.importKind === 'type' || node.importKind === 'typeof') {
+      removeNode(context, node);
+
+      // Remove trailing comma
+      var ast = context.ast;
+      var idx = findTokenIndex(ast.tokens, node.end);
+      while (isComment(ast.tokens[idx])) {
+        idx++;
+      }
+      if (ast.tokens[idx].type.label === ',') {
+        removeNode(context, ast.tokens[idx]);
+      }
+      return false;
     }
   }
 };
@@ -189,8 +206,7 @@ function removeImplementedInterfaces(context, node, ast) {
 
     var lastIdx = findTokenIndex(ast.tokens, last.start);
     do {
-      if (ast.tokens[idx].type !== 'CommentBlock' &&
-          ast.tokens[idx].type !== 'CommentLine') {
+      if (!isComment(ast.tokens[idx])) {
         removeNode(context, ast.tokens[idx]);
       }
     } while (idx++ !== lastIdx);
@@ -308,6 +324,11 @@ function findTokenIndex(tokens, offset) {
   }
 
   return ptr;
+}
+
+// True if the provided token is a comment.
+function isComment(token) {
+  return token.type === 'CommentBlock' || token.type === 'CommentLine';
 }
 
 // Produce a string full of space characters of a given size.
