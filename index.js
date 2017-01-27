@@ -220,7 +220,7 @@ function removeNode(context, node) {
   var length = removedNodes.length;
   var index = length;
 
-  // Check for line's trailing space to be removed.
+  // Check for line's leading and trailing space to be removed.
   var spaceNode = context.pretty ? getLeadingSpaceNode(context, node) : null;
   var lineNode = context.pretty ? getTrailingLineNode(context, node) : null;
 
@@ -253,8 +253,8 @@ function removeNode(context, node) {
   return false;
 }
 
-function getLeadingSpaceNode(state, node) {
-  var source = state.source;
+function getLeadingSpaceNode(context, node) {
+  var source = context.source;
   var end = node.start;
   var start = end;
   while (source[start - 1] === ' ' || source[start - 1] === '\t') {
@@ -269,8 +269,8 @@ function getLeadingSpaceNode(state, node) {
   }
 }
 
-function getTrailingLineNode(state, node) {
-  var source = state.source;
+function getTrailingLineNode(context, node) {
+  var source = context.source;
   var start = node.end;
   var end = start;
   while (source[end] === ' ' || source[end] === '\t') {
