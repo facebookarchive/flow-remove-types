@@ -284,10 +284,7 @@ function getTrailingLineNode(context, node) {
     }
     end++;
 
-    var ast = state.ast;
-    var idx = findTokenIndex(ast.tokens, node.start);
-    var prevToken = ast.tokens[idx - 1];
-    if (prevToken.loc.end.line !== node.loc.end.line) {
+    if (isLastNodeRemovedFromLine(context, node)) {
       return {
         start: start,
         end: end,
@@ -295,6 +292,55 @@ function getTrailingLineNode(context, node) {
       };
     }
   }
+}
+
+// Returns true if node is the last to be removed from a line.
+function isLastNodeRemovedFromLine(context, node) {
+  var tokens = context.ast.tokens;
+  var priorTokenIdx = findTokenIndex(tokens, node.start) - 1;
+  var token = tokens[priorTokenIdx];
+  var line = node.loc.end.line;
+
+  // Find previous token that was not removed on the same line.
+  while (priorTokenIdx >= 0 &&
+         token.loc.end.line === line &&
+         isRemovedToken(context, token)) {
+    token = tokens[--priorTokenIdx]
+  }
+
+  // If there's no prior token (start of file), or the prior token is on another
+  // line, this line must be fully removed.
+  return !token || token.loc.end.line !== line;
+}
+
+// Returns true if the provided token was previously marked as removed.
+function isRemovedToken(context, token) {
+  var removedNodes = context.removedNodes;
+  var nodeIdx = removedNodes.length - 1;
+
+  // Find the last removed node which could possibly contain this token.
+  while (nodeIdx >= 0 && removedNodes[nodeIdx].start > token.start) {
+    nodeIdx--;
+  }
+
+  var node = removedNodes[nodeIdx];
+
+  // This token couldn't be removed if not contained within the removed node.
+  if (nodeIdx === -1 || node.end < token.end) {
+    return false;
+  }
+
+  // Iterate through the tokens contained by the removed node to find a match.
+  var tokens = context.ast.tokens;
+  var tokenIdx = findTokenIndex(tokens, node.start);
+  while (tokens[tokenIdx].end <= node.end) {
+    if (token === tokens[tokenIdx]) {
+      return true;
+    }
+    tokenIdx++;
+  }
+
+  return false;
 }
 
 // Given the AST output of babylon parse, walk through in a depth-first order,

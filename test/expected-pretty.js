@@ -3,7 +3,6 @@
 // Regular import
 import {
   Something,
-
 } from 'some-module';
 
 // Import types
