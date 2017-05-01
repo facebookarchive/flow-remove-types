@@ -25,6 +25,7 @@ var printScript;
 var checkSource;
 var all;
 var source;
+var options = [];
 var i = 2;
 while (i < process.argv.length) {
   var arg = process.argv[i++];
@@ -50,10 +51,35 @@ while (i < process.argv.length) {
     checkSource = true;
   } else if (arg === '-a' || arg === '--all') {
     all = true;
-  } else if (arg[0] !== '-') {
+  } else if (arg[0] === '-' || arg === 'debug') {
+    options.push(arg);
+  } else {
     source = arg;
     break;
   }
+}
+
+// If node options were provided, forward to another process with the options
+// applied before other arguments.
+if (options.length > 0) {
+  var nodePath = process.argv.shift();
+  var nodeArgs = options.concat(process.argv.filter(function (arg) {
+    return options.indexOf(arg) === -1;
+  }));
+
+  const child_process = require('child_process');
+  const proc = child_process.spawn(nodePath, nodeArgs, { stdio: 'inherit' });
+  proc.on('exit', function (code, signal) {
+    process.on('exit', function () {
+      if (signal) {
+        process.kill(process.pid, signal);
+      } else {
+        process.exit(code);
+      }
+    });
+  });
+
+  return;
 }
 
 require('./register')({ all: all });

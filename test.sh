@@ -38,3 +38,8 @@ if [ "$RES" != 42 ]; then echo 'Node require hook failed'; exit 1; fi;
 echo "Test: flow-node"
 FLOW_NODE=$(./flow-node ./test/test-node-module.js);
 if [ "$FLOW_NODE" != 42 ]; then echo 'flow-node failed'; exit 1; fi;
+
+# Test flow-node with options
+echo "Test: flow-node with options"
+FLOW_NODE_OPTS=$(./flow-node --code-comments -p 'process.argv.length');
+if [ "$FLOW_NODE_OPTS" != 4 ]; then echo 'flow-node with options failed'; exit 1; fi;
