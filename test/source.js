@@ -134,3 +134,8 @@ export class MyClass<T> extends SomeClass implements SomeInterface {
   }
 
 }
+
+// Test async/await functions
+async function asyncFunction<T>(input: T): Promise<T> {
+  return await t;
+}

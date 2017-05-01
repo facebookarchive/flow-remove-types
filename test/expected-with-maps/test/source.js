@@ -99,4 +99,9 @@ export class MyClass extends SomeClass {
 
 }
 
+// Test async/await functions
+async function asyncFunction(input) {
+  return await t;
+}
+
 //# sourceMappingURL=source.js.map
