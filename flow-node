@@ -16,7 +16,7 @@ var usage = 'Usage: flow-node [options] [ script.js ] [arguments] \n' +
 '  -v, --version         Prints the current version of flow-node\n' +
 '  -e, --eval script     Evaluate script\n' +
 '  -p, --print script    Evaluate script and print result\n' +
-'  -c, --check           Syntax check script without executing\n';
+'  -c, --check           Syntax check script without executing\n' +
 '  -a, --all             Interpret all files as flow-typed, not just those with a @flow comment\n';
 
 // Collect arguments
