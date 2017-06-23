@@ -84,6 +84,10 @@ if (options.length > 0) {
 
 require('./register')({ all: all });
 
+function withoutOptions(optionsToExclude, options) {
+  return options.filter((option) => !optionsToExclude.includes(option))
+}
+
 // Evaluate and possibly also print a script.
 if (evalScript || printScript) {
   global.__filename = '[eval]';
@@ -120,8 +124,9 @@ if (evalScript || printScript) {
 // Or run the script.
 } else if (source) {
   var absoluteSource = path.resolve(process.cwd(), source);
+  var previousOptions = process.argv.slice(2, i - 1)
   process.argv = [ 'node' ].concat(
-    process.argv.slice(2, i - 1),
+    withoutOptions(['-a', '--all'], previousOptions),
     absoluteSource,
     process.argv.slice(i)
   );
