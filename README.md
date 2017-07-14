@@ -58,6 +58,8 @@ fs.writeFileSync('output.js', output.toString());
 
 **Webpack:** [`remove-flow-types-loader`](https://github.com/conorhastings/remove-flow-types-loader)
 
+**Gulp:** [`gulp-flow-remove-types`](https://github.com/wain-pc/gulp-flow-remove-types)
+
 
 ## Use with existing development tools
 
