@@ -121,7 +121,6 @@ if (evalScript || printScript) {
 } else if (source) {
   var absoluteSource = path.resolve(process.cwd(), source);
   process.argv = [ 'node' ].concat(
-    process.argv.slice(2, i - 1),
     absoluteSource,
     process.argv.slice(i)
   );
