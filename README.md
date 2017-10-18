@@ -49,6 +49,7 @@ var output = flowRemoveTypes(input);
 fs.writeFileSync('output.js', output.toString());
 ```
 
+When using the `flow-remove-types` script, be sure [not to direct the output to itself](https://superuser.com/questions/597244/why-does-redirecting-the-output-of-a-file-to-itself-produce-a-blank-file)!
 
 ## Use in Build Systems:
 
