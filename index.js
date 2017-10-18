@@ -42,23 +42,6 @@ module.exports = function flowRemoveTypes(source, options) {
     }
   }
 
-  var removedNodes = [];
-
-  // Remove the flow pragma.
-  if (pragmaStart !== -1) {
-    var prePragmaLines = source.slice(0, pragmaStart).split('\n');
-    var pragmaLine = prePragmaLines.length;
-    var pragmaCol = prePragmaLines[pragmaLine - 1].length;
-    removedNodes.push({
-      start: pragmaStart,
-      end: pragmaStart + pragmaSize,
-      loc: {
-        start: { line: pragmaLine, column: pragmaCol },
-        end: { line: pragmaLine, column: pragmaCol + pragmaSize }
-      },
-    })
-  }
-
   // Babylon is one of the sources of truth for Flow syntax. This parse
   // configuration is intended to be as permissive as possible.
   var ast = babylon.parse(source, {
@@ -69,6 +52,8 @@ module.exports = function flowRemoveTypes(source, options) {
     plugins: [ '*', 'jsx', 'flow' ],
   });
 
+  var removedNodes = [];
+
   var context = {
     ast: ast,
     source: source,
@@ -76,6 +61,16 @@ module.exports = function flowRemoveTypes(source, options) {
     pretty: Boolean(options && options.pretty)
   };
 
+  // Remove the flow pragma.
+  if (pragmaStart !== -1) {
+    var pragmaIdx = findTokenIndex(ast.tokens, pragmaStart);
+    var pragmaType = ast.tokens[pragmaIdx].type;
+    if (pragmaType === 'CommentLine' || pragmaType === 'CommentBlock') {
+      removedNodes.push(getPragmaNode(context, pragmaStart, pragmaSize));
+    }
+  }
+
+  // Remove all flow type definitions.
   visit(ast, context, removeFlowVisitor);
 
   return resultPrinter(options, source, removedNodes);
@@ -251,6 +246,35 @@ function removeNode(context, node) {
   }
 
   return false;
+}
+
+function getPragmaNode(context, start, size) {
+  var source = context.source;
+  var line = 1;
+  var column = 0;
+  for (var position = 0; position < start; position++) {
+    var char = source[position];
+    if (char === '\n') {
+      line++;
+      column = 0;
+    } else if (char === '\r') {
+      if (source[position + 1] === '\n') {
+        position++;
+      }
+      line++;
+      column = 0;
+    } else {
+      column++;
+    }
+  }
+  return {
+    start: start,
+    end: start + size,
+    loc: {
+      start: { line: line, column: column },
+      end: { line: line, column: column + size },
+    },
+  };
 }
 
 function getLeadingSpaceNode(context, node) {
