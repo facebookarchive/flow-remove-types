@@ -81,6 +81,9 @@ undefined
 42
 ```
 
+> Note: This package is also available under the *alias* `flow-node` since it's
+> often looked for at that location due to the popularity of this script. Both
+> scripts are available no matter which package you install.
 
 ## Use the require hook
 

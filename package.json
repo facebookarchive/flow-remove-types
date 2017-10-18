@@ -27,7 +27,8 @@
   },
   "scripts": {
     "test": "./test.sh",
-    "test-update": "./test-update.sh"
+    "test-update": "./test-update.sh",
+    "postpublish": "./publish-npm-alias.sh"
   },
   "keywords": [
     "flow",
