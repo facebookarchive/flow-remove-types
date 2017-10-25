@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Test expected output
 echo "Test: flow-remove-types test/source.js"
