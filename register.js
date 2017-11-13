@@ -26,7 +26,14 @@ exts.forEach(function (ext) {
     if (shouldTransform(filename, options)) {
       var super_compile = module._compile;
       module._compile = function _compile(code, filename) {
-        super_compile.call(this, flowRemoveTypes(code, options).toString(), filename);
+        try {
+          var patched = flowRemoveTypes(code, options);
+        }
+        catch (e) {
+          e.message = filename + ': ' + e.message;
+          throw e;
+        }
+        super_compile.call(this, patched.toString(), filename);
       };
     }
     superLoader(module, filename);
