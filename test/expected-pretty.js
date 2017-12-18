@@ -103,3 +103,11 @@ export class MyClass extends SomeClass {
 async function asyncFunction(input) {
   return await t;
 }
+
+// Test read-only data
+
+// Test covariant type variant class with constaint and default.
+export class TestClassWithDefault {
+
+  constructor() {}
+}

@@ -139,3 +139,14 @@ export class MyClass<T> extends SomeClass implements SomeInterface {
 async function asyncFunction<T>(input: T): Promise<T> {
   return await t;
 }
+
+// Test read-only data
+export type TestReadOnly = {|
+  +readOnly: $ReadOnlyArray<>
+|};
+
+// Test covariant type variant class with constaint and default.
+export class TestClassWithDefault<+T: TestReadOnly = TestReadOnly> {
+
+  constructor() {}
+}
