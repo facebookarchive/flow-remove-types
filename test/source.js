@@ -76,7 +76,7 @@ declare class Baz {
   method(): mixed;
 }
 
-// Declare funtion
+// Declare function
 declare function someFunc(): void;
 
 // Declare interface
@@ -95,11 +95,18 @@ declare type Location = {
   lon: number
 };
 
+// Declare opaque type alias
+declare opaque type OT;
+declare opaque type PositiveNumber: number;
+
 // Declare variable
 declare var SOME_CONST: string;
 
 // Type alias
 type T = string;
+
+// Opaque type alias
+opaque type O = string;
 
 // Export type
 export type { T };
@@ -109,6 +116,9 @@ export { Wrapper };
 
 // Exported type alias
 export type ONE = { one: number };
+
+// Exported opaque type alias
+export opaque type TWO = { two: number };
 
 // Object with types within
 var someObj = {

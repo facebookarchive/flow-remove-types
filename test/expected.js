@@ -76,7 +76,7 @@ class StringWrapper extends Wrapper         {
                   
  
 
-// Declare funtion
+// Declare function
                                   
 
 // Declare interface
@@ -95,11 +95,18 @@ class StringWrapper extends Wrapper         {
              
   
 
+// Declare opaque type alias
+                       
+                                           
+
 // Declare variable
                                
 
 // Type alias
                 
+
+// Opaque type alias
+                       
 
 // Export type
                   
@@ -109,6 +116,9 @@ export { Wrapper };
 
 // Exported type alias
                                   
+
+// Exported opaque type alias
+                                         
 
 // Object with types within
 var someObj = {
