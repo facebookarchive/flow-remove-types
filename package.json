@@ -40,6 +40,7 @@
   ],
   "dependencies": {
     "babylon": "^6.15.0",
+    "pirates": "^3.0.2",
     "vlq": "^0.2.1"
   },
   "engines": {
