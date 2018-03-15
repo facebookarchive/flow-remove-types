@@ -49,7 +49,8 @@ module.exports = function flowRemoveTypes(source, options) {
     allowReturnOutsideFunction: true,
     allowSuperOutsideMethod: true,
     sourceType: 'module',
-    plugins: [ '*', 'jsx', 'flow' ],
+    plugins: [ '*', 'jsx', 'flow', 'classProperties' ],
+    tokens: true
   });
 
   var removedNodes = [];
