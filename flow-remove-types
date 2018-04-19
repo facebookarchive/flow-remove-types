@@ -14,6 +14,8 @@ var usage = 'Usage: flow-remove-types [options] [sources] \n' +
 '  -x, --extensions  File extensions to transform\n' +
 '  -o, --out-file    The file path to write transformed file to\n' +
 '  -d, --out-dir     The directory path to write transformed files within\n' +
+'  -c, --copy-source Copy typed source with .flow extension to output\n' +
+'                    Only applies when --out-file or --out-dir options are used\n' +
 '  -a, --all         Transform all files, not just those with a @flow comment\n' +
 '  -p, --pretty      Remove flow types without replacing with spaces, \n' +
 '                    producing prettier output but may require using source maps\n' +
@@ -71,6 +73,7 @@ var ignore = /node_modules/;
 var extensions = [ '.js', '.mjs', '.jsx', '.flow', '.es6' ];
 var outDir;
 var outFile;
+var copySource;
 var all;
 var pretty;
 var sourceMaps;
@@ -94,6 +97,8 @@ while (i < process.argv.length) {
     outFile = process.argv[i++];
   } else if (arg === '-d' || arg === '--out-dir') {
     outDir = process.argv[i++];
+  } else if (arg === '-c' || arg === '--copy-source') {
+    copySource = true;
   } else if (arg === '-a' || arg === '--all') {
     all = true;
   } else if (arg === '-p' || arg === '--pretty') {
@@ -219,6 +224,11 @@ function transformAndOutput(content, outFile, source) {
       var mapOutFile = outFile + '.map';
       fs.writeFileSync(mapOutFile, JSON.stringify(map) + '\n');
       info('\033[2m \u21B3 \033[32m' + mapOutFile + '\033[0m\n');
+    }
+    if (copySource) {
+      var flowSource = outFile + '.flow';
+      fs.writeFileSync(flowSource, content);
+      info('\033[2m \u21B3 \033[32m' + flowSource + '\033[0m\n');
     }
   } else {
     process.stdout.write(code);
