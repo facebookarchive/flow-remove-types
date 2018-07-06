@@ -14,6 +14,7 @@ var usage = 'Usage: flow-remove-types [options] [sources] \n' +
 '  -x, --extensions  File extensions to transform\n' +
 '  -o, --out-file    The file path to write transformed file to\n' +
 '  -d, --out-dir     The directory path to write transformed files within\n' +
+'  -C, --comment     Transform flow types to flow Comment Types in output\n' +
 '  -a, --all         Transform all files, not just those with a @flow comment\n' +
 '  -p, --pretty      Remove flow types without replacing with spaces, \n' +
 '                    producing prettier output but may require using source maps\n' +
@@ -71,6 +72,7 @@ var ignore = /node_modules/;
 var extensions = [ '.js', '.mjs', '.jsx', '.flow', '.es6' ];
 var outDir;
 var outFile;
+var commentTypes;
 var all;
 var pretty;
 var sourceMaps;
@@ -94,6 +96,8 @@ while (i < process.argv.length) {
     outFile = process.argv[i++];
   } else if (arg === '-d' || arg === '--out-dir') {
     outDir = process.argv[i++];
+  } else if (arg === '-C' || arg === '--comment') {
+    commentTypes = true;
   } else if (arg === '-a' || arg === '--all') {
     all = true;
   } else if (arg === '-p' || arg === '--pretty') {
@@ -231,7 +235,7 @@ function btoa(str) {
 
 function transformSource(content, filepath) {
   try {
-    return flowRemoveTypes(content, { all: all, pretty: pretty });
+    return flowRemoveTypes(content, { all: all, pretty: pretty, commentTypes: commentTypes });
   } catch (error) {
     if (error.loc) {
       var line = error.loc.line - 1;
