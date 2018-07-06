@@ -10,7 +10,7 @@ echo "Test: flow-remove-types --pretty test/source.js"
 DIFF=$(./flow-remove-types --pretty test/source.js | diff test/expected-pretty.js -);
 if [ -n "$DIFF" ]; then echo "$DIFF"; exit 1; fi;
 
-# Test expected source maps with --pretty --sourcemaps
+# Test expected source maps with --pretty --sourcemaps --out-dir
 echo "Test: flow-remove-types --pretty --sourcemaps test/source.js -d test/expected-with-maps"
 TEST_DIR=$(cd $(dirname ${BASH_SOURCE[0]}) && pwd)
 DIR=$(mktemp -d)
@@ -27,6 +27,16 @@ if [ -n "$DIFF_MAP" ]; then echo "$DIFF_MAP"; exit 1; fi;
 # Test expected source maps with --pretty --sourcemaps inline
 echo "Test: flow-remove-types --pretty --sourcemaps inline test/source.js"
 DIFF=$(./flow-remove-types --pretty --sourcemaps inline test/source.js | diff test/expected-pretty-inlinemap.js -);
+if [ -n "$DIFF" ]; then echo "$DIFF"; exit 1; fi;
+
+# Test expected output with --comment option
+echo "Test: flow-remove-types --comment test/source.js"
+DIFF=$(./flow-remove-types --comment test/source.js | diff test/expected-comments.js -);
+if [ -n "$DIFF" ]; then echo "$DIFF"; exit 1; fi;
+
+# Test expected output with --comment option
+echo "Test: flow-remove-types --comment test/source-nested-comments.js"
+DIFF=$(./flow-remove-types --comment test/source-nested-comments.js | diff test/expected-nested-comments.js -);
 if [ -n "$DIFF" ]; then echo "$DIFF"; exit 1; fi;
 
 # Test expected output with @flow outside of comments
