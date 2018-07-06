@@ -46,6 +46,16 @@ echo "Test: flow-remove-types --pretty --sourcemaps inline test/source.js"
 DIFF=$(./flow-remove-types --pretty --sourcemaps inline test/source.js | diff test/expected-pretty-inlinemap.js -);
 if [ -n "$DIFF" ]; then echo "$DIFF"; exit 1; fi;
 
+# Test expected output with --comment option
+echo "Test: flow-remove-types --comment test/source.js"
+DIFF=$(./flow-remove-types --comment test/source.js | diff test/expected-comments.js -);
+if [ -n "$DIFF" ]; then echo "$DIFF"; exit 1; fi;
+
+# Test expected output with --comment option
+echo "Test: flow-remove-types --comment test/source-nested-comments.js"
+DIFF=$(./flow-remove-types --comment test/source-nested-comments.js | diff test/expected-nested-comments.js -);
+if [ -n "$DIFF" ]; then echo "$DIFF"; exit 1; fi;
+
 # Test expected output with @flow outside of comments
 echo "Test: flow-remove-types test/without-flow.js"
 DIFF=$(./flow-remove-types test/without-flow.js | diff test/without-flow.js -);

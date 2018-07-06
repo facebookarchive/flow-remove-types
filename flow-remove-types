@@ -16,6 +16,7 @@ var usage = 'Usage: flow-remove-types [options] [sources] \n' +
 '  -d, --out-dir     The directory path to write transformed files within\n' +
 '  -c, --copy-source Copy typed source with .flow extension to output\n' +
 '                    Only applies when --out-file or --out-dir options are used\n' +
+'  -C, --comment     Transform flow types to flow Comment Types in output\n' +
 '  -a, --all         Transform all files, not just those with a @flow comment\n' +
 '  -p, --pretty      Remove flow types without replacing with spaces, \n' +
 '                    producing prettier output but may require using source maps\n' +
@@ -74,6 +75,7 @@ var extensions = [ '.js', '.mjs', '.jsx', '.flow', '.es6' ];
 var outDir;
 var outFile;
 var copySource;
+var commentTypes;
 var all;
 var pretty;
 var sourceMaps;
@@ -99,6 +101,8 @@ while (i < process.argv.length) {
     outDir = process.argv[i++];
   } else if (arg === '-c' || arg === '--copy-source') {
     copySource = true;
+  } else if (arg === '-C' || arg === '--comment') {
+    commentTypes = true;
   } else if (arg === '-a' || arg === '--all') {
     all = true;
   } else if (arg === '-p' || arg === '--pretty') {
@@ -241,7 +245,7 @@ function btoa(str) {
 
 function transformSource(content, filepath) {
   try {
-    return flowRemoveTypes(content, { all: all, pretty: pretty });
+    return flowRemoveTypes(content, { all: all, pretty: pretty, commentTypes: commentTypes });
   } catch (error) {
     if (error.loc) {
       var line = error.loc.line - 1;

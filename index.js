@@ -14,6 +14,9 @@ var vlq = require('vlq');
  *     If true, removes types completely rather than replacing with spaces.
  *     This may require using source maps.
  *
+ *   - commentTypes: (default: false)
+ *     If true, transforms types to Comment Types using shortform syntax.
+ *
  * Returns an object with two methods:
  *
  *   - .toString()
@@ -25,6 +28,7 @@ var vlq = require('vlq');
 module.exports = function flowRemoveTypes(source, options) {
   // Options
   var all = Boolean(options && options.all);
+  var commentTypes = Boolean(options && options.commentTypes);
   if (options && options.checkPragma) {
     throw new Error(
       'flow-remove-types: the "checkPragma" option has been replaced by "all".'
@@ -61,8 +65,8 @@ module.exports = function flowRemoveTypes(source, options) {
     pretty: Boolean(options && options.pretty)
   };
 
-  // Remove the flow pragma.
-  if (pragmaStart !== -1) {
+  // Remove the flow pragma. if not using Comment Types
+  if (!commentTypes && pragmaStart !== -1) {
     var pragmaIdx = findTokenIndex(ast.tokens, pragmaStart);
     var pragmaType = ast.tokens[pragmaIdx].type;
     if (pragmaType === 'CommentLine' || pragmaType === 'CommentBlock') {
@@ -76,9 +80,13 @@ module.exports = function flowRemoveTypes(source, options) {
   return resultPrinter(options, source, removedNodes);
 }
 
+var LINE_RX = /(\r\n?|\n|\u2028|\u2029)/;
+var NESTED_COMMENTS_RX = / *(\/\*.*?\*\/| *\/\/.*) */g;
+
 function resultPrinter(options, source, removedNodes) {
   // Options
   var pretty = Boolean(options && options.pretty);
+  var commentTypes = Boolean(options && options.commentTypes);
 
   return {
     toString: function () {
@@ -94,7 +102,24 @@ function resultPrinter(options, source, removedNodes) {
         var node = removedNodes[i];
         result += source.slice(lastPos, node.start);
         lastPos = node.end;
-        if (!pretty) {
+        if (commentTypes) {
+          // Remove nested comments with a regexp replace
+          var toComment = source.slice(node.start, node.end).replace(NESTED_COMMENTS_RX, ' ').replace(/\s+;/, ';');
+          if (!node.loc || node.loc.start.line === node.loc.end.line) {
+            // possibly use the shorter single ':' syntax
+            if (toComment && toComment[0] === ':') {
+              result += ' /*' + toComment + ' */ ';
+            } else {
+              result += '/*:: ' + toComment + ' */';
+            }
+          } else {
+            var toCommentLines = toComment.split(LINE_RX);
+            // TODO: detect file line endings scheme (\n or \r\n)
+            toCommentLines.unshift('/*::\n');
+            toCommentLines.push('\n*/');
+            result += toCommentLines.join('');
+          }
+        } else if (!pretty) {
           var toReplace = source.slice(node.start, node.end);
           if (!node.loc || node.loc.start.line === node.loc.end.line) {
             result += space(toReplace.length);
@@ -120,8 +145,6 @@ function resultPrinter(options, source, removedNodes) {
     }
   }
 }
-
-var LINE_RX = /(\r\n?|\n|\u2028|\u2029)/;
 
 // A collection of methods for each AST type names which contain Flow types to
 // be removed.
