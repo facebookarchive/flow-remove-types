@@ -35,7 +35,6 @@ popd > /dev/null
 DIFF_SOURCE=$(diff test/expected-with-maps/test/source.js $DIR/test/expected-with-maps/test/source.js);
 DIFF_MAP=$(diff test/expected-with-maps/test/source.js.map $DIR/test/expected-with-maps/test/source.js.map);
 DIFF_FLOW=$(diff test/source.js $DIR/test/expected-with-maps/test/source.js.flow);
-echo $DIR
 rm -rf $DIR
 if [ -n "$DIFF_SOURCE" ]; then echo "$DIFF_SOURCE"; exit 1; fi;
 if [ -n "$DIFF_MAP" ]; then echo "$DIFF_MAP"; exit 1; fi;
