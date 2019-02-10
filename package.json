@@ -39,6 +39,7 @@
     "es6"
   ],
   "dependencies": {
+    "@babel/parser": "^7.3.2",
     "babylon": "^6.15.0",
     "vlq": "^0.2.1"
   }
