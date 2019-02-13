@@ -160,3 +160,7 @@ number=>42;
 // Test calling a function with explicit type arguments
 doSomething<number>(3);
 doSomething <T, U>(3);
+
+// Test type union and intersection syntax with leading "operator"
+var union: | T | U;
+var intersection: & T & U;
