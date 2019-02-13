@@ -120,4 +120,8 @@ var newline_arrow_2 = ()=>42;
 doSomething<number>(3);
 doSomething <T, U>(3);
 
+// Test type union and intersection syntax with leading "operator"
+var union;
+var intersection;
+
 //# sourceMappingURL=source.js.map
