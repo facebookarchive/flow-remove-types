@@ -117,8 +117,8 @@ var newline_arrow = () => 42;
 var newline_arrow_2 = ()=>42;
 
 // Test calling a function with explicit type arguments
-doSomething<number>(3);
-doSomething <T, U>(3);
+doSomething(3);
+doSomething(3);
 
 // Test type union and intersection syntax with leading "operator"
 var union;

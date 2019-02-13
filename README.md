@@ -124,10 +124,10 @@ and characters and that all character offsets remain the same. This removes the
 need for sourcemaps, maintains legible output, and ensures that it is super easy
 to include `flow-remove-types` at any point in your existing build tools.
 
-Built atop the excellent [`babylon`](https://github.com/babel/babylon) parser,
-`flow-remove-types` shares the same parse rules as the source of truth as
-Flow Babel plugins. It also passes through other common non-standard syntax such
-as [JSX](https://facebook.github.io/jsx/) and experimental ECMAScript proposals.
+Built atop the official Flow [parser](https://github.com/facebook/flow/tree/master/packages/flow-parser),
+`flow-remove-types` is designed to operate on the same syntax Flow itself understands.
+It also passes through other common non-standard syntax such as [JSX](https://facebook.github.io/jsx/)
+and experimental ECMAScript proposals that Flow supports.
 
 **Before:**
 
@@ -195,6 +195,8 @@ fs.writeFileSync('output.js.map', JSON.stringify(sourceMap));
 
 
 ## Performance
+
+> *NOTE*: These timings are for `flow-remove-types` v1.
 
 ### Install:
 
