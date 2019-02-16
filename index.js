@@ -94,6 +94,9 @@ function resultPrinter(options, source, removedNodes) {
         var node = removedNodes[i];
         result += source.slice(lastPos, node.start);
         lastPos = node.end;
+        if (typeof node.__spliceValue === 'string') {
+          result += node.__spliceValue;
+        }
         if (!pretty) {
           var toReplace = source.slice(node.start, node.end);
           if (!node.loc || node.loc.start.line === node.loc.end.line) {
@@ -184,6 +187,50 @@ var removeFlowVisitor = {
         removeNode(context, ast.tokens[idx]);
       }
       return false;
+    }
+  },
+
+  ArrowFunctionExpression: function(context, node) {
+    // Naively erasing a multi-line return type from an arrow function will
+    // leave a newline between the parameter list and the arrow, which is not
+    // valid JS. Detect this here and move the arrow up to the correct line.
+
+    if (context.pretty) {
+      // Pretty-printing solves this naturally. Good, because our arrow-fudging
+      // below doesn't play nice with source maps... Which are only created when
+      // using --pretty.
+      return;
+    }
+    var returnType = node.returnType;
+    if (returnType) {
+      var ast = context.ast;
+      var paramEndIdx = findTokenIndex(ast.tokens, returnType.start);
+      do {
+        paramEndIdx--;
+      } while (isComment(ast.tokens[paramEndIdx]));
+
+      var arrowIdx = findTokenIndex(ast.tokens, returnType.end);
+      while (ast.tokens[arrowIdx].type.label !== '=>') {
+        arrowIdx++;
+      }
+
+      if (
+        ast.tokens[paramEndIdx].loc.end.line <
+        ast.tokens[arrowIdx].loc.start.line
+      ) {
+        // Insert an arrow immediately after the parameter list.
+        removeNode(context,
+          getSpliceNodeAtPos(
+            context,
+            ast.tokens[paramEndIdx].end,
+            ast.tokens[paramEndIdx].loc.end,
+            ' =>'
+          )
+        );
+
+        // Delete the original arrow token.
+        removeNode(context, ast.tokens[arrowIdx]);
+      }
     }
   }
 };
@@ -316,6 +363,17 @@ function getTrailingLineNode(context, node) {
       };
     }
   }
+}
+
+// Creates a zero-width "node" with a value to splice at that position.
+// WARNING: This is only safe to use when source maps are off!
+function getSpliceNodeAtPos(context, pos, loc, value) {
+  return {
+    start: pos,
+    end: pos,
+    loc: {start: loc, end: loc},
+    __spliceValue: value
+  };
 }
 
 // Returns true if node is the last to be removed from a line.
