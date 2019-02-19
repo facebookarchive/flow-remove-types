@@ -40,5 +40,8 @@
   "dependencies": {
     "babylon": "^6.15.0",
     "vlq": "^0.2.1"
+  },
+  "engines": {
+    "node": ">=4"
   }
 }
