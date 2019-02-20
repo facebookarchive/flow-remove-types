@@ -120,6 +120,9 @@ var newline_arrow_2 = ()=>42;
 doSomething(3);
 doSomething(3);
 
+// Test invoking a constructor with explicit type arguments
+new Event();
+
 // Test type union and intersection syntax with leading "operator"
 var union;
 var intersection;
