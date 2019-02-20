@@ -161,6 +161,9 @@ number=>42;
 doSomething<number>(3);
 doSomething <T, U>(3);
 
+// Test invoking a constructor with explicit type arguments
+new Event<number>();
+
 // Test type union and intersection syntax with leading "operator"
 var union: | T | U;
 var intersection: & T & U;
