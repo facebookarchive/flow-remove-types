@@ -124,4 +124,7 @@ doSomething(3);
 var union;
 var intersection;
 
+// Test generic async arrow funcion
+const f = async() => {};
+
 //# sourceMappingURL=source.js.map

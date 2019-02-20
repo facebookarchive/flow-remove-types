@@ -164,3 +164,6 @@ doSomething <T, U>(3);
 // Test type union and intersection syntax with leading "operator"
 var union: | T | U;
 var intersection: & T & U;
+
+// Test generic async arrow funcion
+const f = async <T>(): T => {};
