@@ -150,3 +150,9 @@ export class TestClassWithDefault<+T: TestReadOnly = TestReadOnly> {
 
   constructor() {}
 }
+
+var newline_arrow = ():
+number => 42;
+
+var newline_arrow_2 = () :
+number=>42;

@@ -150,3 +150,9 @@ export class TestClassWithDefault                                  {
 
   constructor() {}
 }
+
+var newline_arrow = () => 
+          42;
+
+var newline_arrow_2 = () =>  
+        42;
