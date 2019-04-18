@@ -3,7 +3,7 @@
   "version": "1.2.3",
   "description": "Removes Flow type annotations from JavaScript files with speed and simplicity.",
   "author": "Lee Byron <lee@leebyron.com> (http://leebyron.com/)",
-  "license": "BSD-3-Clause",
+  "license": "MIT",
   "main": "index.js",
   "bin": {
     "flow-remove-types": "./flow-remove-types",
@@ -14,8 +14,7 @@
     "register.js",
     "flow-remove-types",
     "flow-node",
-    "LICENSE",
-    "PATENTS"
+    "LICENSE"
   ],
   "homepage": "https://github.com/flowtype/flow-remove-types",
   "bugs": {
